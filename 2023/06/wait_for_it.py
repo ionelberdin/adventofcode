@@ -39,30 +39,35 @@ The MovingTime thresholds to win are:
     tm2 = (t + sqrt(t^2 - 4 * d)) / 2
 '''
 
-# Let's compile a regular expression to identify non-digit chars.
 
 def wait_for_it(filepath):
     with open(filepath, 'r') as f:
-        return reduce(lambda x, y: x * y, get_ways_to_win(f))
+        times = map(int, BLANKS.split(f.readline().strip())[1:])
+        distances = map(int, BLANKS.split(f.readline().strip())[1:])
+    ways_to_win = map(get_ways_to_win, times, distances)
+    return reduce(lambda x, y: x * y, ways_to_win)
 
 BLANKS = re.compile('[\s\t]+')
-EPS = 1e-10  # to exclude the upper limit from the possible solutions
+EPS = 1e-10  # to exclude the upper threshold from the possible solutions
 
-def get_ways_to_win(f):
-    times = [int(t) for t in BLANKS.split(f.readline().strip())[1:]]
-    distances = [int(d) for d in BLANKS.split(f.readline().strip())[1:]]
-    for t, d in zip(times, distances):
-        if ((sq := (t * t - 4 * d)) <= 0):
-            yield 0
-        tm1 = (t - (sq := (sqrt(sq)))) / 2
-        tm2 = (t + sq) / 2
-        print(t, d, tm1, tm2, int(tm2) - int(tm1)
-)
-        yield int(tm2 - EPS) - int(tm1)
+def get_ways_to_win(t, d):
+    if ((sq := (t * t - 4 * d)) <= 0):
+        return 0
+    tm1 = (t - (sq := (sqrt(sq)))) / 2
+    tm2 = (t + sq) / 2
+    return int(tm2 - EPS) - int(tm1)
 
+
+''' The 2nd problem can be solved with the same approach, only
+    the first parse needs to be modified and, since the input are combined,
+    there's no need for a reduce in this case
+'''
 
 def wait_for_it_01(filepath):
-    pass
+    with open(filepath, 'r') as f:
+        t = int(''.join(BLANKS.split(f.readline().strip())[1:]))
+        d = int(''.join(BLANKS.split(f.readline().strip())[1:]))
+    return get_ways_to_win(t, d)
 
 if __name__ == '__main__':
     VERSIONS = {0: wait_for_it, 1: wait_for_it_01}
