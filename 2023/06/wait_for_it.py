@@ -59,8 +59,8 @@ def get_ways_to_win(t, d):
 
 
 ''' The 2nd problem can be solved with the same approach, only
-    the first parse needs to be modified and, since the input are combined,
-    there's no need for a reduce in this case
+    the initial parsing of the input data needs to be modified and,
+    since the input are combined, there's no need for a reduce in this case.
 '''
 
 def wait_for_it_01(filepath):
