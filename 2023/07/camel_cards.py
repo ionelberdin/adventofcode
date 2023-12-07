@@ -10,7 +10,6 @@ from functools import cmp_to_key, reduce
 
 LINE = re.compile('(\w+) (\d+)')
 
-CARD_MAP = {x: n for n, x in enumerate('23456789TJQKA')}
 
 TYPE_MAP = {
    '5': 7,  # 5 of a kind
@@ -25,6 +24,7 @@ TYPE_MAP = {
 
 class Hand(object):
     
+    CARD_MAP = {x: n for n, x in enumerate('23456789TJQKA')}
     hands = []
 
     def __init__(self, hand, bid):
@@ -44,7 +44,7 @@ class Hand(object):
         self.hand_type = TYPE_MAP[values]
 
     def get_int_hand(self, hand):
-        self.int_hand = [CARD_MAP[x] for x in hand]
+        self.int_hand = [self.CARD_MAP[x] for x in hand]
 
     def __lt__(self, other):
         return other > self
@@ -72,15 +72,43 @@ class Hand(object):
 
     @classmethod
     def sort(cls):
-        cls.hands.sort(key=cmp_to_key(Hand.cmp_to_key))
+        cls.hands.sort(key=cmp_to_key(cls.cmp_to_key))
         for rank, hand in enumerate(cls.hands, start=1):
             hand.rank = rank
 
-    @classmethod
-    def cmp_to_key(cls, a, b):
-        if (a > b):
-            return 1
-        return -1
+    @staticmethod
+    def cmp_to_key(a, b):
+        return 1 if (a > b) else -1
+
+
+class HandWithJokers(Hand):
+    CARD_MAP = {x: n for n, x in enumerate('J23456789TQKA')}
+    
+    def __init__(self, hand, bid):
+        self.str_hand = hand
+        self.hand = Counter(hand)
+        self.bid = int(bid)
+        self.get_type()
+        self.get_int_hand(hand)
+        self.rank = None
+        HandWithJokers.add(self)
+
+    def get_type(self):
+
+        old = dict(self.hand)
+        if (('J' in self.hand) and (self.hand['J'] < 5)):
+            J = self.hand.pop('J')
+            highest = sorted(self.hand.items(), key=lambda x: HandWithJokers.CARD_MAP[x[0]], reverse=True)
+            highest.sort(key=lambda x: x[1], reverse=True)
+            highest = highest[0][0]
+            self.hand[highest] += J
+
+        values = list(self.hand.values())
+        values.sort(reverse=True)
+        values = ''.join(map(str, values))
+
+        self.hand_type = TYPE_MAP[values]
+
 
 def camel_cards(filepath):
     with open(filepath, 'r') as f:
@@ -91,8 +119,17 @@ def camel_cards(filepath):
     return reduce(lambda x, y: x + y, map(lambda x: x.winnings, Hand.hands))
 
 
+def camel_cards_01(filepath):
+    with open(filepath, 'r') as f:
+        while (line := f.readline().strip('\n\s\t')):
+            matches = LINE.search(line)
+            HandWithJokers(hand=matches.group(1), bid=matches.group(2))
+    HandWithJokers.sort()
+    return reduce(lambda x, y: x + y, map(lambda x: x.winnings, HandWithJokers.hands))
+
+
 if __name__ == '__main__':
-    VERSIONS = {0: camel_cards, 1: camel_cards}
+    VERSIONS = {0: camel_cards, 1: camel_cards_01}
     parser = ArgumentParser()
     parser.add_argument('filepath')
     parser.add_argument('-v', '--version', default=0, type=int)

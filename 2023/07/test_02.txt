@@ -1,3 +1,0 @@
-Time:      71530
-Distance:  940200
-WaysToWin: 71503
