@@ -7,7 +7,7 @@ Status:
         * Test 1: PASS
         * Puzzle: PASS
     - Part 2:
-        * Test 2: TBC
+        * Test 1: PASS
         * Puzzle: TBC
 '''
 import re
@@ -38,9 +38,18 @@ def get_next_value(history):
 
     return history[0][-1]
 
+# 2. Functions that are specific for problem 2
+
+def mirage_maintenance_2(filepath:str):
+    previous_values = map(get_next_value, map(lambda x: x[::-1], parse_input(filepath)))
+
+    return sum(previous_values)
+
+
 if __name__ == '__main__':
     assert(mirage_maintenance_1('test_01.txt') == 114)
     assert(mirage_maintenance_1('puzzle_input.txt') == 1938731307)
+    assert(mirage_maintenance_2('test_01.txt') == 2)
 
 
-    print(mirage_maintenance_1('puzzle_input.txt'))
+    print(mirage_maintenance_2('puzzle_input.txt'))
