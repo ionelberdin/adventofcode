@@ -1,10 +1,16 @@
-''' Day 2: Cube Conundrum 
-https://adventofcode.com/2023/day/2
+''' Advent of Code 2023
+    Day 2: Cube Conundrum 
+    https://adventofcode.com/2023/day/2
+
+Status:
+    * Part 1:
+        - Test 1: PASS
+        - Puzzle: PASS
+
 '''
 
 import re
 
-from argparse import ArgumentParser
 from collections import Counter
 from functools import reduce
 
@@ -16,42 +22,35 @@ from functools import reduce
 5. Sum the IDs of the possible ones.
 '''
 
-LINE = re.compile('Game (\d+): (.+)')
+class Game(object):
+    LINE = re.compile('Game (\d+): (.+)')
 
-def cube_conundrum(filepath):
-    game_max = Counter(red=12, green=13, blue=12)
+    def __init__(self, line):
+        line = self.LINE.search(line)
+        self.id = int(line.group(1))
+        hands = [[y.split(' ') for y in x.split(', ')] for x in line.group(2).split('; ')]
+        self.hands = [Counter({y: int(x) for x, y in z}) for z in hands]
+
+    @property
+    def min(self):
+        return reduce(lambda x, y: x | y, self.hands)
+    
+
+def cube_conundrum_1(filepath):
+
+    games = [Game(line) for line in parse_input(filepath)]
+
+    game_max = Counter(red=12, green=13, blue=14)
+    possible_games = filter(lambda g: g.min <= game_max, games)
+    return sum(map(lambda x: x.id, possible_games))
+
+def parse_input(filepath):
     with open(filepath, 'r') as f:
-        possible_games = filter(lambda x: is_game_possible(x[1], game_max), get_games(f))
-        return reduce(lambda x, y: x + y, map(lambda x: x[0], possible_games))
-
-def is_game_possible(game, game_max):
-    return game <= game_max
-
-def get_games(f):
-    return map(parse_line, read_lines(f))
-
-def read_lines(f):
-    while (line := f.readline()):
-        yield line.strip(' \n\t\s')
-
-
-def parse_line(line):
-    line = LINE.search(line)
-    game = reduce(lambda x, y: x | y, map(parse_hand, line.group(2).split('; ')))
-    return int(line.group(1)), game
-
-def parse_hand(hand):
-    return Counter({y: int(x) for x, y in [z.split(' ') for z in hand.split(', ')]})
-
-def cube_conundrum_01(filepath):
-    with open(filepath, 'r') as f:
-        return reduce(lambda x, y: x + y, get_ids_of_possible_games(f))
+        while (line := f.readline().strip('\n\s\t')):
+            yield line
 
 if __name__ == '__main__':
-    VERSIONS = {0: cube_conundrum, 1: cube_conundrum_01}
-    parser = ArgumentParser()
-    parser.add_argument('filepath')
-    parser.add_argument('-v', '--version', default=0, type=int)
-    args = parser.parse_args()
-    
-    print(VERSIONS[args.version](args.filepath))
+    assert(cube_conundrum_1('test_01.txt') == 8)
+    assert(cube_conundrum_1('puzzle_input.txt') == 2239)
+
+    print(cube_conundrum_1('puzzle_input.txt'))
