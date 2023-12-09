@@ -6,6 +6,9 @@ Status:
     * Part 1:
         - Test 1: PASS
         - Puzzle: PASS
+    * Part 2:
+        - Test 1: PASS
+        - Puzzle: PASS
 
 '''
 
@@ -22,6 +25,8 @@ from functools import reduce
 5. Sum the IDs of the possible ones.
 '''
 
+# 0. Common to both parts 
+
 class Game(object):
     LINE = re.compile('Game (\d+): (.+)')
 
@@ -34,8 +39,14 @@ class Game(object):
     @property
     def min(self):
         return reduce(lambda x, y: x | y, self.hands)
-    
 
+def parse_input(filepath):
+    with open(filepath, 'r') as f:
+        while (line := f.readline().strip('\n\s\t')):
+            yield line
+
+# 1. Specific to part 1
+    
 def cube_conundrum_1(filepath):
 
     games = [Game(line) for line in parse_input(filepath)]
@@ -44,13 +55,16 @@ def cube_conundrum_1(filepath):
     possible_games = filter(lambda g: g.min <= game_max, games)
     return sum(map(lambda x: x.id, possible_games))
 
-def parse_input(filepath):
-    with open(filepath, 'r') as f:
-        while (line := f.readline().strip('\n\s\t')):
-            yield line
+# 2. Specific to part 2
+
+def cube_conundrum_2(filepath):
+
+    games = [Game(line) for line in parse_input(filepath)]
+
+    return sum(map(lambda x: reduce(lambda y, z: y * z, x.min.values()), games))
 
 if __name__ == '__main__':
     assert(cube_conundrum_1('test_01.txt') == 8)
     assert(cube_conundrum_1('puzzle_input.txt') == 2239)
 
-    print(cube_conundrum_1('puzzle_input.txt'))
+    print(cube_conundrum_2('puzzle_input.txt'))
