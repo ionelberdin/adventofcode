@@ -51,30 +51,44 @@ def haunted_wasteland_1(filepath:str):
 
 # 2. Functions that are specific for problem 2
 
-'''Problem 2 doesn't have a straight forward solution, because it 
-requires you to dig into the data, otherwise the solution won't converge.
-When you look into the data and you realise that each ghost only arrives
-to a certain goal and does't pass through the others, and once it passes, 
+'''Problem 2 doesn't have a very straight forward solution, because there's 
+a huge simplification that they don't explicit in the problem explanation.
+
+Basically, it requires you to dig into the data, otherwise the solution 
+may take very long to converge.
+
+When you look into the data, you need to realise that each ghost only arrives
+to a certain goal and doesn't pass through the others, and once it passes, 
 it does so AGAIN and AGAIN in the same number of steps over and over.
+
 Furthermore, all ghosts arrive to their goals in a multiple of the 
 number of directions provided by the puzzle input (307 in my case).
-Hence it's only necessary to calculate in how many steps each ghost
-arrives for the 1st time to its goal and then calculate the least
-common multiple of all of them, which is crazy high --> 10921547990923.
-Once you realise this, it takes no time to find the solution.
+
+Hence, it's only necessary to calculate how many steps each ghost takes to
+arrives for the 1st time to its goal, and then calculate the least
+common multiple of all of them, which is quite high --> 10921547990923.
+
+Once you realise this, finding the solution takes no time.
 '''
 
 def haunted_wasteland_2(filepath:str):
+    # Same initial parsing as in the 1st problem
     directions, lines = parse_input(filepath)
     network = get_network(lines)
 
+    # Now the initial position requires a regular expression...
     INIT_POS = re.compile('\w{2}A')
-
+    # ...and so does the goal as well.
     goal = re.compile('\w{2}Z')
+
     positions = list(filter(lambda x: INIT_POS.match(x), network))
 
     steps = map(lambda x: navigate(network, directions, x, goal), positions)
 
+    # Then return the least common multiple
+    # since math library doesn't have such function, but contains
+    # the greatest common divisor, we do:
+    # lcm(x, y) = x * y / gcd(x, y)
     return reduce(lambda x, y: int((x * y) / gcd(x, y)), steps)
 
 if __name__ == '__main__':
