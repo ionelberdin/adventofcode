@@ -8,7 +8,7 @@ Status:
         * Puzzle: PASS
     - Part 2:
         * Test 1: PASS
-        * Puzzle: TBC
+        * Puzzle: PASS
 '''
 import re
 from functools import reduce
