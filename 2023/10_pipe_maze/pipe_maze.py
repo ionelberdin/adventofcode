@@ -13,7 +13,6 @@ Status:
         * Test 5: PASS
         * Puzzle: PASS
 '''
-from functools import reduce
 
 # 0. Functions that are common to both problems
 
@@ -33,10 +32,10 @@ class Maze(object):
     def __init__(self, filepath:str):
         with open(filepath, 'r') as f:
             self.map = [x.strip('\n\s\t') for x in f.readlines()]
-            self.number_of_rows = len(self.map)
-            self.number_of_columns = len(self.map[0])
-            self.start = self.find_tile_position('S')
-            self.restart()
+        self.number_of_rows = len(self.map)
+        self.number_of_columns = len(self.map[0])
+        self.start = self.find_tile_position('S')
+        self.restart()
 
     def find_tile_position(self, what:str):
         for row_index, row in enumerate(self.map):
