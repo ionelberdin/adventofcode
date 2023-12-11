@@ -4,14 +4,16 @@
 
 Status:
     - Part 1:
-        * Test 1: TBC
-        * Puzzle: TBC
+        * Test 1: PASS
+        * Test 2: PASS
+        * Puzzle: PASS
     - Part 2:
-        * Test 1: TBC
-        * Puzzle: TBC
+        * Test 3: PASS
+        * Test 4: PASS
+        * Test 5: PASS
+        * Puzzle: PASS
 '''
 from functools import reduce
-
 
 # 0. Functions that are common to both problems
 
@@ -62,7 +64,7 @@ class Maze(object):
             if (self.is_wrong_move(position, direction)):
                 continue
 
-            self.visited.add(position)
+            self.visited.append(position)
             self.position = position
             self.direction = direction
             tile = self.get_tile(position)
@@ -76,7 +78,7 @@ class Maze(object):
 
     def restart(self):
         self.position = self.start
-        self.visited = set()
+        self.visited = []
         self.direction = (0, 0)
 
     def sum(self, position:tuple[int, int], direction:tuple[int, int]):
@@ -86,9 +88,7 @@ class Maze(object):
         return position if (row_in_range and column_in_range) else None
 
 
-# 1. Functions that are specific for problem 1
-
-def pipe_maze_1(filepath:str):
+def solve_maze(filepath:str):
     maze = Maze(filepath)
     for direction in ((-1, 0), (1, 0), (0, 1), (0, -1)):
         maze.restart()
@@ -100,13 +100,60 @@ def pipe_maze_1(filepath:str):
         if keep_moving is False:
             break
     else:
-        return "Solution not found"
+        return None
 
+    return maze
+
+# 1. Functions that are specific for problem 1
+
+def pipe_maze_1(filepath:str):
+    maze = solve_maze(filepath)
     return int(len(maze.visited) / 2)
+
+# 2. Functions that are specific for problem 2
+
+def pipe_maze_2(filepath:str):
+    ''' The key to this problem is realising that the inner points can be
+        obtained knowing the inner area and the external perimiter.
+        For a given area, the inner points are:
+            InnerPoints = (MaxPerimiter - Perimiter) / 2
+        where:
+            MaxPerimiter = 2 * (Area + 1)
+    '''
+    maze = solve_maze(filepath)
+    perimiter = len(maze.visited)
+    area = integrate_manhattan_line([maze.start] + maze.visited)
+    max_perimiter = 2 * (area + 1)
+    return int((max_perimiter - perimiter) / 2)
+
+
+def integrate_manhattan_line(points):
+    ''' All segments son either horizontal or vertical and in any case
+        they all have unitary lenght. Hence, integrating them is just
+        adding triangles in which:
+           the base is 1
+           the height is the orthogonal distance of the segment to the origin
+        since all triangles are half of the product of their base by their height,
+        the division by 2 is left for the end.
+        Since the direction of integration is arbitrary, the result could
+        be negative, that's why its absolute value is taken.
+        And finally, since we are counting squares, the result must be an integer.
+    '''
+    area = 0
+    for a, b in zip(points[:-1], points[1:]):
+        ax, ay = a
+        bx, by = b
+        area += ax * (by - ay) if (ax == bx) else ay * (ax - bx)
+    return int(abs(area / 2))
 
 
 if __name__ == '__main__':
     assert(pipe_maze_1('test_01.txt') == 4)
     assert(pipe_maze_1('test_02.txt') == 8)
+    assert(pipe_maze_1('puzzle_input.txt') == 6733)
+    assert(pipe_maze_2('test_03.txt') == 4)
+    assert(pipe_maze_2('test_04.txt') == 8)
+    assert(pipe_maze_2('test_05.txt') == 10)
+    assert(pipe_maze_2('puzzle_input.txt') == 435)
 
-    print(pipe_maze_1('puzzle_input.txt'))
+    print(pipe_maze_2('puzzle_input.txt'))
