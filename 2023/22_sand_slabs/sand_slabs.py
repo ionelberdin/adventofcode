@@ -5,7 +5,7 @@
 Status:
     - Part 1:
         * Test 1: PASS
-        * Puzzle: TBD
+        * Puzzle: PASS
     - Part 2:
         * Test 2: TBD
         * Puzzle: TBD
@@ -29,6 +29,10 @@ class Brick(object):
         self.is_grounded = False
         self.supported_by = set()
 
+        self.overlap_above = set()
+        self.overlap_below = set()
+        self.no_overlap = set()
+
         Brick.add(self)
 
     def can_fall(self):
@@ -40,8 +44,7 @@ class Brick(object):
         if (self.is_grounded):
             return False
 
-        other_bricks = filter(lambda brick: brick is not self, Brick.collection)
-        bricks_directly_below = filter(lambda brick: brick.is_directly_below_of(self), other_bricks)
+        bricks_directly_below = filter(lambda brick: brick.is_directly_below_of(self), self.overlap_below)
         
         if (len(bricks_directly_below := list(bricks_directly_below)) > 0):
             for brick in bricks_directly_below:
@@ -59,6 +62,18 @@ class Brick(object):
         if (brick.z[0] != self.z[-1] + 1):
             return False
 
+        if (not self.overlap_already_checked(brick)):
+            self.check_overlap(brick)
+
+        return (brick in self.overlap_above) 
+
+    def check_overlap(self, brick):
+
+        if (brick in (self.overlap_above | self.overlap_below)):
+            return True
+        elif (brick in (self.no_overlap)):
+            return False
+
         x_overlap = ((brick.x[0] <= self.x[0] <= brick.x[-1]) or
                      (brick.x[0] <= self.x[-1] <= brick.x[-1]) or
                      ((brick.x[0] > self.x[0]) and (self.x[-1] > brick.x[-1])))
@@ -71,6 +86,9 @@ class Brick(object):
             return True
 
         return False
+
+    def overlap_already_checked(self, brick):
+        return brick in (self.overlap_above | self.overlap_below | self.no_overlap)
 
     @classmethod
     def add(cls, brick):
@@ -99,8 +117,20 @@ class SandSlabs(object):
 
     def let_bricks_fall(self):
         bricks = sorted(Brick.collection, key=lambda brick: brick.z[0])
+        
+        for brick in bricks:
+            for other_brick in bricks:
+                if ((other_brick == brick) or brick.overlap_already_checked(other_brick)):
+                    continue
+                if (brick.check_overlap(other_brick)):
+                    brick.overlap_above.add(other_brick)
+                    other_brick.overlap_below.add(brick)
+                else:
+                    brick.no_overlap.add(other_brick)
+                    other_brick.no_overlap.add(brick)
+
+        print("Overlap checked")
         while (any(map(lambda brick: brick.can_fall(), filter(lambda x: not x.is_grounded, bricks)))):
-            print
             continue
 
     def process_input_line(self, input_line:str):
@@ -123,6 +153,6 @@ def solve_part_1(filepath:str):
 
 if __name__ == '__main__':
     assert(solve_part_1('test_01.txt') == 5)
-    # assert(pipe_maze_1('puzzle_input.txt') == 6733)
+    # assert(solve_part_1('puzzle_input.txt') == 401)  # Takes a minute to complete
 
     print(solve_part_1('puzzle_input.txt'))
