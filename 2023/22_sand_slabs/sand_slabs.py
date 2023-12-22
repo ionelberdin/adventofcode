@@ -90,14 +90,17 @@ class Brick(object):
     def overlap_already_checked(self, brick):
         return brick in (self.overlap_above | self.overlap_below | self.no_overlap)
 
+    def __str__(self):
+        return "{0},{2},{4}~{1},{3},{5}".format(*(*self.x, *self.y, *self.z))
+    
     @classmethod
     def add(cls, brick):
         cls.collection.add(brick)
 
     @classmethod
     def init(cls):
-
         cls.collection = set()
+        cls.fallen = 0
 
 class SandSlabs(object):
 
@@ -107,13 +110,38 @@ class SandSlabs(object):
             while (input_line := f.readline().strip('\n\s\t')):
                 self.process_input_line(input_line)
 
+    def get_bricks_with_single_support(self):
+
+        return filter(lambda brick: len(brick.supported_by) == 1, Brick.collection)
+
     def get_disintegratable_briks(self):
         ''' Disintegratable bricks are those that, if removed, no other bricks would fall '''
-        bricks_with_only_one_support = filter(lambda brick: len(brick.supported_by) == 1, Brick.collection)
-        essential_bricks = map(lambda brick: brick.supported_by, bricks_with_only_one_support)
-        essential_bricks = set(reduce(lambda x, y: x | y, essential_bricks))
 
-        return Brick.collection - essential_bricks
+        return Brick.collection - self.get_essential_bricks()
+
+    def get_bricks_that_would_fall(self):
+        essential_bricks = self.get_essential_bricks()
+        counter = 0
+        for brick in essential_bricks:
+            fallen_bricks = set([brick])
+            while True:
+                other_bricks = filter(lambda x: x not in fallen_bricks, Brick.collection)
+                other_bricks = set(filter(lambda x: len(x.supported_by - fallen_bricks) == 0, other_bricks))
+                if (len(other_bricks) > 0):
+                    counter += len(other_bricks)
+                    fallen_bricks = fallen_bricks | other_bricks
+                else:
+                    break
+
+        return counter
+
+    def get_essential_bricks(self):
+        ''' Those you shouldn't remove to prevent other bricks from falling '''
+        bricks = self.get_bricks_with_single_support()
+        essential_bricks = map(lambda brick: brick.supported_by, bricks)
+
+        return set(reduce(lambda x, y: x | y, essential_bricks))
+
 
     def let_bricks_fall(self):
         bricks = sorted(Brick.collection, key=lambda brick: brick.z[0])
@@ -143,6 +171,7 @@ class SandSlabs(object):
 # 1. Functions that are specific for problem 1
 
 def solve_part_1(filepath:str):
+    print("Solving part 1 with:", filepath)
     sand_slabs = SandSlabs(filepath)
     print("Number of bricks:", len(Brick.collection))
     sand_slabs.let_bricks_fall()
@@ -151,8 +180,16 @@ def solve_part_1(filepath:str):
 
 # 2. Functions that are specific for problem 2
 
+def solve_part_2(filepath:str):
+    print("Solving part 2 with:", filepath)
+    sand_slabs = SandSlabs(filepath)
+    print("Number of bricks:", len(Brick.collection))
+    sand_slabs.let_bricks_fall()
+    print("Bricks fallen:", Brick.fallen)
+    return sand_slabs.get_bricks_that_would_fall()
+
 if __name__ == '__main__':
     assert(solve_part_1('test_01.txt') == 5)
     # assert(solve_part_1('puzzle_input.txt') == 401)  # Takes a minute to complete
 
-    print(solve_part_1('puzzle_input.txt'))
+    print(solve_part_2('test_01.txt'))
