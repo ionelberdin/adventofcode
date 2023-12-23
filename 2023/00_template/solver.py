@@ -39,12 +39,12 @@ class Solver(object):
 
 
 def solve(filepath:str, part:int):
-    print("Solving part 1 with:", filepath)
+    print("Solving part {} with:".format(part), filepath)
     start = default_timer()
     solver = Solver(filepath)
     result = solver.solve(part=part)
     duration = default_timer() - start
-    print("Problem solved in {}s".format(duration))
+    print("Solved in {}s".format(duration))
     print("Result:", result)
     return result
 
