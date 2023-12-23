@@ -15,8 +15,6 @@ Status:
 from timeit import default_timer
 
 
-# 0. Code common to both parts of the problem
-
 class Solver(object):
 
     def __init__(self, filepath:str):
