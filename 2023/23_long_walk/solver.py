@@ -149,10 +149,33 @@ class Solver(object):
                 continue
             for tile in next_tiles:
                 self.paths.put(Path(path.tiles | set([tile]), tile))
+        # print(self.path)
         return self.result
 
     def solve_part_2(self):
-        return None
+        tiles = filter(lambda tile: tile.type != '.', Tile.collection.values())
+        for tile in tiles:
+            tile.type = '.'
+
+        Tile.find_neighbours()
+
+        start = list(filter(lambda tile: tile.x == 0, Tile.collection.values()))
+        self.paths.put(Path(set(start), start[0]))
+
+        while (not self.paths.empty()):
+            path = self.paths.get()
+            next_tiles = path.get_next_tiles()
+            if (len(next_tiles) == 0):
+                if (path.last_visited_tile.x == self.xmax):
+                    if (len(path) > self.result):
+                        self.path = path
+                        self.result = len(path)
+                        print(self.paths.qsize(), self.result)
+                continue
+            for tile in next_tiles:
+                self.paths.put(Path(path.tiles | set([tile]), tile))
+        # print(self.path)
+        return self.result
 
 
 def solve(filepath:str, part:int):
@@ -169,8 +192,7 @@ def solve(filepath:str, part:int):
 if __name__ == '__main__':
     assert(solve('test_01.txt', part=1) == 94)
     # assert(solve('puzzle_input.txt', part=1) == 2178)  # takes more than 5s
-    # assert(solve('test_01.txt', part=2) == TBD)
+    assert(solve('test_01.txt', part=2) == 154)
     # assert(solve('puzzle_input.txt', part=2) == TBD)
 
-    print(solve('test_01.txt', part=1))
-    print(solve('puzzle_input.txt', part=1))
+    print(solve('puzzle_input.txt', part=2))
