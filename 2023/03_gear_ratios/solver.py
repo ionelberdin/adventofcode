@@ -27,8 +27,14 @@ class Solver(object):
 
     def process_input_line(self, line_number:int, input_line:str):
         numbers = INT_PATTERN.findall(input_line)
-        for number in numbers:
-            print(line_number, number, input_line.index(number))
+        position = 0
+        for n, number in enumerate(numbers):
+            position = input_line.index(number, position)
+            numbers[n] = (number, position)
+            position += 1
+
+        symbols = None  # FIXME: Symbols need to be retrieved in the same manner as numbers
+        return numbers, symbols
 
     def solve(self, part:int):
         if (part == 1):
