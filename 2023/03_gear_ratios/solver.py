@@ -6,7 +6,7 @@
 Status:
     - Part 1:
         * Test 1: PASS
-        * Puzzle: TBD
+        * Puzzle: PASS
     - Part 2:
         * Test 2: TBD
         * Puzzle: TBD
@@ -43,7 +43,7 @@ class Solver(object):
         for n, element in enumerate(elements):
             column_number = row.index(element, column_number)
             elements_and_positions.add((element, (row_number, column_number)))
-            column_number += 1
+            column_number += len(element)
     
         return elements_and_positions
 
@@ -62,6 +62,23 @@ class Solver(object):
         
         return next(symbol_positions, None) is not None
 
+    def show_numbers_with_adjoining_elements(self):
+
+        for number_and_position in self.numbers:
+            number, position = number_and_position
+            row_number, column_number = position        
+            row_min = row_number - 1 if row_number > 0 else 0
+            row_max = row_number + 2
+            col_min = column_number - 1 if column_number > 0 else 0
+            col_max = column_number + len(number) + 1
+
+            has = self.has_any_adjoining_symbol(number_and_position)
+            a = {True: "\033[92m", False: "\033[93m"}
+            print(f"{a[has]}{number_and_position}\033[0m")
+            for row in self.rows[row_min:row_max]:
+                print(f"{a[has]}{row[col_min:col_max]}\033[0m")
+            print()
+
     def solve(self, part:int):
         if (part == 1):
             return self.solve_part_1()
@@ -79,10 +96,10 @@ class Solver(object):
             self.numbers |= self.findall_and_positions(INT_PATTERN, row, row_number)
             self.symbols |= self.findall_and_positions(SYMBOL_PATTERN, row, row_number)
         symbols = set(map(lambda x: x[0], self.symbols))
-        print(len(self.rows), len(self.numbers), len(self.symbols), len(symbols))
-        print("".join(symbols))
 
         self.symbol_positions = set(map(lambda x: x[1], self.symbols))
+
+        # self.show_numbers_with_adjoining_elements()
 
         numbers = filter(self.has_any_adjoining_symbol, self.numbers)
 
@@ -105,8 +122,8 @@ def solve(filepath:str, part:int):
 
 if __name__ == '__main__':
     assert(solve('test_01.txt', part=1) == 4361)
-    # assert(solve('puzzle_input.txt', part=1) == TBD)  # 553806 < x < 557509
+    assert(solve('puzzle_input.txt', part=1) == 553825)
     # assert(solve('test_01.txt', part=2) == TBD)
     # assert(solve('puzzle_input.txt', part=2) == TBD)
 
-    print(solve('puzzle_input.txt', part=1))
+    print(solve('test_01.txt', part=2))
