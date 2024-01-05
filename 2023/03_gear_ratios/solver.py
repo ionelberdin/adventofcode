@@ -14,6 +14,7 @@ Status:
 
 import re
 
+from functools import reduce
 from timeit import default_timer
 
 INT_PATTERN = re.compile('\d+')
@@ -106,7 +107,29 @@ class Solver(object):
         return sum(list(map(lambda x: int(x[0]), numbers)))
 
     def solve_part_2(self):
-        return None
+        """ Strategy:
+            1. Find gears: star symbols with exactly 2 adjacent numbers.
+            2. Get their gear ratio.
+            3. Sum the gear ratio of all gears.
+        """
+        gears = self.find_gears()
+        gear_ratios = map(lambda gear: gear[2][0] * gear[2][1], gears)
+
+        return reduce(sum, gear_ratios)
+
+    def find_gears(self):
+        stars = set(filter(lambda x: x[0] == '*', self.symbols))
+        stars = map(lambda x: (x[0], x[1], self.get_adjoining_numbers(x)), stars)
+        gears = filter(lambda x: len(x[2]) == 2, stars)
+        return set(gears)
+
+    def get_adjoining_numbers(self, symbol_and_position):
+        symbol, position = symbol_and_position
+        row_number, column_number = position
+        numbers = filter(lambda x: abs(row_number - x[1][0]) <= 1, self.numbers)
+        numbers = filter(lambda x: (x[1][1] - len(x[0])) <= column_number <= (column_number + 1, numbers)  # FIXME
+        return set(numbers)
+
 
 
 def solve(filepath:str, part:int):
