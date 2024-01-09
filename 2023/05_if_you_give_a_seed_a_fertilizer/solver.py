@@ -8,12 +8,13 @@ Status:
         * Test 1: PASS
         * Puzzle: PASS
     - Part 2:
-        * Test 2: TBD
+        * Test 2: PASS
         * Puzzle: TBD
 '''
 
 import re
 
+from functools import reduce
 from timeit import default_timer
 
 MAP_PATTERN = re.compile('^(?P<map_name>[\w\-]+) map:$')
@@ -66,7 +67,7 @@ class Solver(object):
     def load_input(self):
         with open(self.filepath, 'r') as f:
             seeds = f.readline().split(':')[1].strip('\n\t ')
-            self.seeds = set(map(int, seeds.split(' ')))
+            self.seeds = list(map(int, seeds.split(' ')))
 
             f.readline()
             map_name = None
@@ -88,14 +89,24 @@ class Solver(object):
             return self.solve_part_2()
 
     def solve_part_1(self):
+        Map.init()
         self.load_input()
         get_locations = lambda x: Map.get_destination_from_source(x, 'seed', 'location')
         locations = map(get_locations, self.seeds)
         return min(locations)
 
     def solve_part_2(self):
-        return None
+        Map.init()
+        self.load_input()
+        get_locations = lambda x: Map.get_destination_from_source(x, 'seed', 'location')
+        locations = map(get_locations, self.generate_seeds())
+        return reduce(lambda x, y: min(x, y), locations)
 
+    def generate_seeds(self) -> int:
+        for x, y in zip(self.seeds[0::2], self.seeds[1::2]):
+            for n in range(y):
+                if (n % 1000000 == 0):
+                yield x + n
 
 def solve(filepath:str, part:int):
     print("Solving part {} with:".format(part), filepath)
@@ -111,7 +122,7 @@ def solve(filepath:str, part:int):
 if __name__ == '__main__':
     assert(solve('test_01.txt', part=1) == 35)
     assert(solve('puzzle_input.txt', part=1) == 31599214)
-    # assert(solve('test_01.txt', part=2) == TBD)
+    assert(solve('test_01.txt', part=2) == 46)
     # assert(solve('puzzle_input.txt', part=2) == TBD)
 
-    print(solve('puzzle_input.txt', part=1))
+    print(solve('puzzle_input.txt', part=2))
