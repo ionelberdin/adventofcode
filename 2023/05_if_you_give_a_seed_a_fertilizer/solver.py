@@ -15,6 +15,7 @@ Status:
 import re
 
 from functools import reduce
+from math import log10, floor
 from timeit import default_timer
 
 MAP_PATTERN = re.compile('^(?P<map_name>[\w\-]+) map:$')
@@ -174,7 +175,7 @@ def solve(filepath:str, part:int):
     solver = Solver(filepath)
     result = solver.solve(part=part)
     duration = default_timer() - start
-    print("Solved in {}s".format(duration))
+    print("Solved in {}s".format(round(duration, -int(floor(log10(duration))) + 2)))
     print("Result:", result)
     return result
 
