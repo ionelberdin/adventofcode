@@ -5,8 +5,8 @@
 
 Status:
     - Part 1:
-        * Test 1: TBD
-        * Puzzle: TBD
+        * Test 1: PASS
+        * Puzzle: PASS
     - Part 2:
         * Test 2: TBD
         * Puzzle: TBD
@@ -16,44 +16,47 @@ import re
 
 from timeit import default_timer
 
-MAP_PATTERN = re.compile('^(?p<map_name>[\w\-]+) map:$')
+MAP_PATTERN = re.compile('^(?P<map_name>[\w\-]+) map:$')
 
 class Map(object):
     collection = {}
     sources = {}
 
-    def __init__(self, map_name:str):
+    def __init__(self, map_name:str) -> None:
         self.map_name = map_name
         self.source, self.destination = map_name.split('-to-')
-        self.rules = {}
+        self.rules = set()
         Map.add_map(self)
 
     @classmethod
-    def add_map(cls, a_map):
+    def add_map(cls, a_map) -> None:
         cls.collection[a_map.map_name] = a_map
         cls.sources[a_map.source] = a_map
 
     @classmethod
-    def init(cls):
+    def init(cls) -> None:
         cls.collection = {}
         cls.sources
 
     @classmethod
     def get_destination_from_source(cls, source:int, source_name:str, destination_name:str) -> int:
         result = source
-        destination = None
-        while (destination != destination_name):
+        while (source_name != destination_name):
             a_map = cls.sources[source_name]
-            destination = a_map.destination
             result = a_map.get(result)
+            source_name = a_map.destination
         return result
 
-    def set(self, first_source:int, first_destination:int, amount:int) -> None:
-        for n in range(amount):
-            self.rules[first_source + n] = first_destination + n
+    def set(self, first_destination:int, first_source:int, amount:int) -> None:
+        condition = lambda x: first_source <= x < first_source + amount
+        transformation = lambda x: x + first_destination - first_source
+        self.rules.add((condition, transformation)) 
 
     def get(self, source:int) -> int:
-        return self.rules[source] if source in self.rules else source
+        for condition, transformation in self.rules:
+            if (condition(source)):
+                return transformation(source)
+        return source
 
 class Solver(object):
 
@@ -62,12 +65,13 @@ class Solver(object):
 
     def load_input(self):
         with open(self.filepath, 'r') as f:
-            seeds = f.readline().split(':')[1].strip('\n\t\s')
+            seeds = f.readline().split(':')[1].strip('\n\t ')
             self.seeds = set(map(int, seeds.split(' ')))
 
             f.readline()
             map_name = None
-            while (line := f.readline().strip('\n\t\s')):
+            while (line := f.readline()):
+                line = line.strip('\n\t ')
                 if (line == ''):
                     continue
                 if ((result := MAP_PATTERN.search(line)) is not None):
@@ -105,9 +109,9 @@ def solve(filepath:str, part:int):
 
 
 if __name__ == '__main__':
-    # assert(solve('test_01.txt', part=1) == TBD)
-    # assert(solve('puzzle_input.txt', part=1) == TBD)
+    assert(solve('test_01.txt', part=1) == 35)
+    assert(solve('puzzle_input.txt', part=1) == 31599214)
     # assert(solve('test_01.txt', part=2) == TBD)
     # assert(solve('puzzle_input.txt', part=2) == TBD)
 
-    print(solve('test_01.txt', part=1))
+    print(solve('puzzle_input.txt', part=1))
