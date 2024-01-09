@@ -12,13 +12,18 @@ Status:
         * Puzzle: TBD
 '''
 
+
+from math import log10, floor
 from timeit import default_timer
 
 
 class Solver(object):
 
     def __init__(self, filepath:str):
-        with open(filepath, 'r') as f:
+        self.filepath = filepath
+
+    def load_input(self):
+        with open(self.filepath, 'r') as f:
             while (input_line := f.readline().strip('\n\s\t')):
                 self.process_input_line(input_line)
 
@@ -44,7 +49,7 @@ def solve(filepath:str, part:int):
     solver = Solver(filepath)
     result = solver.solve(part=part)
     duration = default_timer() - start
-    print("Solved in {}s".format(duration))
+    print("Solved in {}s".format(round(duration, -int(floor(log10(duration))) + 2)))
     print("Result:", result)
     return result
 
