@@ -1,11 +1,11 @@
 ''' Advent of Code 2023
     Day 12: Hot Springs 
-    https://adventofcode.com/2023/day/11
+    https://adventofcode.com/2023/day/12
 
 Status:
     - Part 1:
         * Test 1: PASS
-        * Puzzle: PASS
+        * Puzzle: TBC
     - Part 2:
         * Test 2: TBC
         * Puzzle: TBC
@@ -69,18 +69,18 @@ def get_arrangements_2(record):
 
 def get_operational_cases(operational:int, damaged_groups:int):
     '''Given the number of operational hot springs, and the amount of damaged groups, 
-    the strategy is to consider all the possible cases of groups of operational
+    the strategy is to consider all the possible of groups of operational
     hot springs in between the non-operational ones.
     This should reduce the number of cases to check in comparison with the strategy
     followed in the first attempt.
     We may divide the types of operational hot spring groups into those that are
     external to the non-operational ones, and the internal ones.
     The difference between both of those types is:
-        * The external belong to the integer group bewteen 0 and operational - (damaged_groups - 1)
+        * The external belong to the integer group between 0 and operational - (damaged_groups - 1)
             + There are only 2 possible external groups.
         * The internal belong to the integer group between 1 and operational - (damaged_groups - 1) + 1
             + There are always N-1 internal groups, being N the number of damaged_groups.
-    all boundaries included.
+    All boundaries included.
     eg: Ext1 + DG1 + Int1 + DG2 + Int2 + DG3 + Ext2
     '''
     internal_groups = damaged_groups - 1
