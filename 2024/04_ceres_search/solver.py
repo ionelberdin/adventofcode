@@ -91,4 +91,4 @@ if __name__ == '__main__':
     assert(solve_part_1('puzzle.txt') == 2578)
 
     assert(solve_part_2('test.txt') == 9)
-    print(solve_part_2('puzzle.txt') == 413)
+    print(solve_part_2('puzzle.txt') == 1972)
