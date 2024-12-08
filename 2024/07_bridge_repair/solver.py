@@ -14,16 +14,17 @@ Status:
 from timeit import default_timer
 import re
 from itertools import product
+from typing import Generator
 
 PATTERN = re.compile('[\:\s]+')
 
-def parse_file(filepath:str) -> list[str]:
+def parse_file(filepath:str) -> Generator[int]:
     with open(filepath, 'r') as file:
         for line in file:
             args = list(map(int, PATTERN.split(line.strip('\n\s\b'))))
             yield args
 
-def is_possibly_true(args, operators):
+def is_possibly_true(args:list[int], operators:list[function]) -> bool:
     test_result = args[0]
     operands = args[1:]
     number_of_operands = len(operands)
