@@ -13,10 +13,6 @@ Status:
 
 from timeit import default_timer
 from collections.abc import Iterable
-import re
-
-
-PATTERN = re.compile("[LR]{1}\d+")
 
 
 def parse_file(filepath:str) -> Iterable[int]:
