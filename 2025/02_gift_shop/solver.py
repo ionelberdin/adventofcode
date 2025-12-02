@@ -81,4 +81,10 @@ if __name__ == '__main__':
     assert(solve_part_1('puzzle.txt') == 21898734247)
 
     assert(solve_part_2('test.txt') == 4174379265)
+    assert(solve_part_2('test2.txt') == 11+22)
+    assert(solve_part_2('test3.txt') == 99+111)
+    assert(solve_part_2('test4.txt') == 999+1010)
+    assert(solve_part_2('test5.txt') == 1188511885)
+    assert(solve_part_2('test6.txt') == 222222)
+    assert(solve_part_2('test7.txt') == 0)
     assert(solve_part_2('puzzle.txt') == 28915664433)  # too high
