@@ -46,6 +46,19 @@ def solve_part_1(filepath:str) -> int:
     return result
 
 def get_higher_joltage(number:str, digits:int) -> str:
+    joltage = number[:digits]
+    length = len(number[digits:])
+    skip = 0
+    for idx, num in enumerate(number[digits:]):
+        if skip > 0:
+            skip -= 1
+            continue
+        remaining = length - idx
+        start = 0 if remaining > digits else digits - remaining
+        for jdx, dig in enumerate(joltage[start:], start):
+            if num > dig:
+                joltage = joltage[:jdx] + number[idx:idx+digits-jdx]
+                break
 
     return '-1'
 
