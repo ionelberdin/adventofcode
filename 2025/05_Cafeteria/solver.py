@@ -12,8 +12,7 @@ Status:
 '''
 
 from timeit import default_timer
-from collections.abc import Iterable
-from itertools import chain
+
 
 def get_containing_range(ranges:set[tuple[int,int]], value:int) -> tuple[int,int] | None:
     for (a, b) in ranges:
