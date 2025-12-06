@@ -7,8 +7,8 @@ Status:
         * Test: PASS
         * Puzzle: PASS
     - Part 2:
-        * Test: TODO
-        * Puzzle: TODO
+        * Test: PASS
+        * Puzzle: FAIL
 '''
 
 from timeit import default_timer
@@ -32,8 +32,10 @@ def consolidate_ranges(file) -> set[tuple[int]]:
             break
 
         a, b = (int(x) for x in line.split('-'))
-        ranges.add((a, b))
-        continue
+        
+        # Remove the comment in the next 2 lines to avoid consolidation
+        # ranges.add((a, b))
+        # continue
 
         # Consolidation proves to be slower for the actual puzzle of this problem
         range_a = get_containing_range(ranges, a)
@@ -68,7 +70,6 @@ def solve_part_1(filepath:str) -> int:
     
     file = open(filepath, 'r')
     ranges = consolidate_ranges(file)
-    print(len(ranges))
 
     result = 0
     for line in file:
@@ -86,7 +87,12 @@ def solve_part_2(filepath:str) -> int:
     print("Solving part 2 with:", filepath)
     start = default_timer()
 
-    result = -1  # TODO
+    file = open(filepath, 'r')
+    ranges = consolidate_ranges(file)
+    file.close()
+    print(len(ranges))
+
+    result = sum([(b-a+1) for a, b in ranges])
 
     duration = default_timer() - start
     print(f"Result of part 2: {result} ({duration}s)")
@@ -98,5 +104,5 @@ if __name__ == '__main__':
     assert(solve_part_1('test.txt') == 3)
     assert(solve_part_1('puzzle.txt') == 828)
 
-    assert(solve_part_2('test.txt') == 4174379265)
-    assert(solve_part_2('puzzle.txt') == 28915664433) 
+    assert(solve_part_2('test.txt') == 14)
+    assert(solve_part_2('puzzle.txt') == 354282804136607) # too high

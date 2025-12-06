@@ -29,3 +29,6 @@ case there's an equilibrium between number of ranges and test numbers in the
 input file.
 
 If there were many more test numbers, then the consolidation could help.
+
+## Part 2
+For part 2 the consolidation seems quite handy.
