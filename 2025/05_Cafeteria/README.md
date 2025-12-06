@@ -9,12 +9,14 @@ The ranges are consolidated to have the minimum number of ranges needed.
 This is actually not necessary, but could help improving performance for long
 lists of numbers to check.
 
+```
 Solving part 1 with: test.txt
 2 ranges considered
 Result of part 1: 3 (0.00032359990291297436s)
 Solving part 1 with: puzzle.txt
 98 ranges considered
 Result of part 1: 828 (0.005678099929355085s)
+```
 
 Comparison with the simple solution in which ranges are not consolidated:
 Solving part 1 with: test.txt
@@ -45,7 +47,9 @@ Solution should be as easy as:
 
 But unfortunatly it doesn't work.
 
+```
 Solving part 2 with: test.txt
 Result of part 2: 14 (0.00024800002574920654s) PASS
 Solving part 2 with: puzzle.txt
 Result of part 2: 354282804136607 (0.0013150000013411045s) FAIL (too high!)
+```
