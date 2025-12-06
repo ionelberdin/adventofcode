@@ -46,6 +46,8 @@ def solve_part_1(filepath:str) -> int:
         prv = set(ths)
         ths = set(nxt)
 
+    file.close()
+    
     duration = default_timer() - start
     print(f"Result of part 1: {result} ({duration}s)")
     return result
