@@ -19,12 +19,15 @@ Result of part 1: 828 (0.005678099929355085s)
 ```
 
 Comparison with the simple solution in which ranges are not consolidated:
+
+```
 Solving part 1 with: test.txt
 4 ranges considered
 Result of part 1: 3 (0.00032350001856684685s)
 Solving part 1 with: puzzle.txt
 174 ranges considered
 Result of part 1: 828 (0.00579450000077486s)
+```
 
 Actually, both solutions are comparable in time, hence it seems in the puzzle
 case there's an equilibrium between number of ranges and test numbers in the
@@ -35,7 +38,7 @@ If there were many more test numbers, then the consolidation could help.
 ## Part 2
 For part 2 the consolidation seems quite handy.
 
-Solution should be as easy as:
+Having the `consolidate_ranges` function, the solution should be as easy as:
 
 ```python
     file = open(filepath, 'r')
@@ -45,7 +48,7 @@ Solution should be as easy as:
     result = sum([(b-a+1) for a, b in ranges])
 ```
 
-But unfortunatly it doesn't work.
+But unfortunatly it doesn't seem to provide a correct answer for the puzzle input.
 
 ```
 Solving part 2 with: test.txt
