@@ -32,3 +32,20 @@ If there were many more test numbers, then the consolidation could help.
 
 ## Part 2
 For part 2 the consolidation seems quite handy.
+
+Solution should be as easy as:
+
+```python
+    file = open(filepath, 'r')
+    ranges = consolidate_ranges(file)
+    file.close()
+
+    result = sum([(b-a+1) for a, b in ranges])
+```
+
+But unfortunatly it doesn't work.
+
+Solving part 2 with: test.txt
+Result of part 2: 14 (0.00024800002574920654s) PASS
+Solving part 2 with: puzzle.txt
+Result of part 2: 354282804136607 (0.0013150000013411045s) FAIL (too high!)

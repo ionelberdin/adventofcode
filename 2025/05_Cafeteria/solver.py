@@ -32,6 +32,8 @@ def consolidate_ranges(file) -> set[tuple[int]]:
             break
 
         a, b = (int(x) for x in line.split('-'))
+        if (a > b):
+            raise(Exception("Wrong order, first number higher than second"))
         
         # Remove the comment in the next 2 lines to avoid consolidation
         # ranges.add((a, b))
@@ -90,9 +92,8 @@ def solve_part_2(filepath:str) -> int:
     file = open(filepath, 'r')
     ranges = consolidate_ranges(file)
     file.close()
-    print(len(ranges))
 
-    result = sum([(b-a+1) for a, b in ranges])
+    result = sum(map(lambda x: (x[1]-x[0]+1), ranges))
 
     duration = default_timer() - start
     print(f"Result of part 2: {result} ({duration}s)")
