@@ -1,5 +1,6 @@
 # Day {day}: {title}
-https://adventofcode.com/{year}/day/{day}
+
+[https://adventofcode.com/{year}/day/{day}]
 
 Tags: {tags}
 
