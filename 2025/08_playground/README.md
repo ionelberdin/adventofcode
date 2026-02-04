@@ -6,7 +6,7 @@ Tags: {tags}
 
 ## Part 1
 
-- Parsing type: {part1_parsing_type}
+- Parsing type: ReadAllLinesFirst
 - Difficulty (0/9): {part1_dificulty}
 - Development time (hh:mm): {part1_develpment_time}
 - Lines of code (int): {part1_lines_of_code}
