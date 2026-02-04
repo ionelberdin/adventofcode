@@ -46,7 +46,38 @@ def solve_part_2(filepath:str) -> int:
     print("Solving part 2 with:", filepath)
     start = default_timer()
 
-    result = 0
+    with open(filepath) as file:
+        lines = file.readlines()
+        num_of_lines = len(lines)
+
+    line_iter = readline(filepath)
+    
+    beams = {next(line_iter).index('S'): 1}
+
+    splits = 1
+    for line in line_iter:
+        spliters = get_splitters(line)
+        next_beams = {}
+        for beam, multiplicity in beams.items():
+            if beam in spliters:
+                try:
+                    next_beams[beam - 1] += multiplicity
+                except:
+                    next_beams[beam - 1] = multiplicity
+                try:
+                    next_beams[beam + 1] += multiplicity
+                except:
+                    next_beams[beam + 1] = multiplicity
+                splits += multiplicity
+            else:
+                try:
+                    next_beams[beam] += multiplicity
+                except:
+                    next_beams[beam] = multiplicity
+
+        beams = dict(next_beams)
+    
+    result = splits
 
     duration = default_timer() - start
     print(f"Result of part 2: {result} ({duration}s)")
@@ -58,5 +89,5 @@ if __name__ == '__main__':
     assert(solve_part_1('test.txt') == 21)
     assert(solve_part_1('puzzle.txt') == 1622)
 
-    assert(solve_part_2('test.txt') == None)
-    assert(solve_part_2('puzzle.txt') == None)
+    assert(solve_part_2('test.txt') == 40)
+    assert(solve_part_2('puzzle.txt') == 10357305916520)
